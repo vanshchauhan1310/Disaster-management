@@ -1,3 +1,4 @@
+/// <reference types="vite/client" />
 import { useState, useEffect, useCallback, useRef } from 'react';
 import type { Disaster } from '../../../types';
 
