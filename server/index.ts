@@ -1,5 +1,5 @@
 import { serve } from "bun";
-import { websocketHandler } from "./src/routes/websocket";
+import { websocketHandler, sockets } from "./src/routes/websocket";
 import { disasterRouter } from "./src/routes/disasters";
 import { toolsRouter } from "./src/routes/tools";
 
@@ -24,6 +24,11 @@ const server = serve({
     // --- CORS preflight ---
     if (req.method === 'OPTIONS') {
       return withCORS(new Response(null, { status: 204 }));
+    }
+
+    // --- Health Check Endpoint ---
+    if (path === '/api/health') {
+      return withCORS(new Response("OK", { status: 200 }));
     }
 
     // --- WebSocket ---
@@ -54,5 +59,14 @@ const server = serve({
   },
   websocket: websocketHandler,
 });
+
+// --- WebSocket Ping/Pong for Keep-Alive ---
+setInterval(() => {
+  for (const ws of sockets) {
+    if (ws.readyState === WebSocket.OPEN) {
+      ws.ping();
+    }
+  }
+}, 30000); // every 30 seconds
 
 console.log(`Bun server running on http://localhost:${server.port}`);
