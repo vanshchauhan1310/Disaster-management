@@ -40,10 +40,14 @@ export function useWebSocket(
     reconnectTimeoutRef.current = setTimeout(() => {
       isConnectingRef.current = true;
       const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-      const wsUrl = `${wsProtocol}//${window.location.host}/ws`;
+      // Use environment variable or default to Render deployment in production
+      const wsUrl = import.meta.env.VITE_WS_URL || 'wss://disaster-management-tj4f.onrender.com/ws';
+      // For local development, fallback to window.location.host if on localhost
+      const localWsUrl = `${wsProtocol}//${window.location.host}/ws`;
+      const finalWsUrl = window.location.hostname === 'localhost' ? localWsUrl : wsUrl;
       
       try {
-        const ws = new WebSocket(wsUrl);
+        const ws = new WebSocket(finalWsUrl);
         wsRef.current = ws;
 
         ws.onopen = () => {

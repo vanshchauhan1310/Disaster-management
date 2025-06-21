@@ -2,7 +2,7 @@ import axios from 'axios';
 import type { Disaster, SocialPost, Resource, OfficialUpdate, GeocodeResult } from '../../../types';
 
 const api = axios.create({
-  baseURL: '/api',
+  baseURL: import.meta.env.VITE_API_BASE_URL || 'https://disaster-management-tj4f.onrender.com/api',
 });
 
 // Disaster endpoints
